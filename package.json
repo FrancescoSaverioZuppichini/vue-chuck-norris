@@ -1,10 +1,9 @@
 {
   "name": "vue-chuck-norris",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A Vue.js project",
   "author": "VaeVictis <>",
   "main": "src/components/ChuckNorris.vue",
-  "private": true,
   "scripts": {
    
   },

@@ -4,8 +4,7 @@
 
 ## Installation
 
-``` bash
-# install dependencies
+```bash
 npm install vue-chuck-norris
 ```
 
