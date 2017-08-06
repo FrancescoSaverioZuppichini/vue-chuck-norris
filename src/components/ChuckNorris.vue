@@ -1,8 +1,8 @@
 <template>
-<div id="chuck-norris">
-    <img src="../assets/chuck norris.jpg" id="chuck-norris__image" @click="fetchRandomJoke()">
+<div id="chuck-norris" :style="{'height':height ? height : '100%'}">
+    <img src="../assets/chuck norris.jpeg" id="chuck-norris__image" @click="fetchRandomJoke()"  :style="{'height':height ? height : 'auto'}">
     <transition name="fade" mode="out-in">
-        <speech-bubble id="chuck-norris__joke__container" :text="currentJoke.joke" v-if="currentJoke" />
+        <speech-bubble id="chuck-norris__joke__container" :text="currentJoke.joke" :style="{'left': offset}" v-if="currentJoke" />
     </transition>
 </div>
 </template>
@@ -12,25 +12,42 @@ import SpeechBubble from './SpeechBubble.vue'
 
 import axios from 'axios'
 
-const API_RANDOM_JOKE_ENDPOINT = 'http://api.icndb.com/jokes/random'
+const API_RANDOM_JOKE_ENDPOINT = 'https://api.icndb.com/jokes/random'
 
 export default {
     name: 'ChuckNorris',
+    props: ["height"],
     components: {
         SpeechBubble
     },
     mounted() {
         this.fetchRandomJoke()
+
+        document.querySelector('img').addEventListener('load',() => {
+            this.getBubbleOffset()
+        })
+
+        window.addEventListener('resize', (e) => this.getBubbleOffset())
+    },
+   
+    beforeDestroy() {
+        window.addEventListener('resize', (e) => this.getBubbleOffset())
     },
     data: function() {
         return {
-            currentJoke: null
+            currentJoke: null,
+            offset: null
         }
     },
     methods: {
+        getBubbleOffset() {
+            this.offset = ((document.getElementById('chuck-norris__image').clientWidth) * (1 / 3)) + "px"
+        },
         fetchRandomJoke() {
             axios.get(API_RANDOM_JOKE_ENDPOINT)
-                .then(({ data }) => {
+                .then(({
+                    data
+                }) => {
                     this.currentJoke = data.value
                     this.currentJoke.joke = this.currentJoke.joke.replace(/&quot;/g, '"')
                 })
@@ -42,13 +59,12 @@ export default {
 <style scoped>
 #chuck-norris {
     position: relative;
-    margin-top: 400px;
-    width: 500px;
 }
 
 #chuck-norris__image {
-    width: 100%;
-    /* height: 200px; */
+    max-width: 100%;
+    width: auto;
+    height: auto;
     transition: all 0.2s ease-in;
 }
 
@@ -59,7 +75,6 @@ export default {
 #chuck-norris__joke__container {
     position: absolute;
     bottom: calc(100%);
-    left: 25%;
     z-index: 99;
 }
 
